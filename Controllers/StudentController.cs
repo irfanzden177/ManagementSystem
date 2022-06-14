@@ -123,6 +123,28 @@ namespace ManagementSystem.Controllers
             
             return View(Sreport);
         }
+        public ActionResult ViewClass(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var Sclass = db.tb_student.Include(c => c.tb_class).FirstOrDefault(x => x.ID == id);
+
+            return View(Sclass);
+        }
+        public ActionResult MyPerformance(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var Sperformance = db.tb_student.Include(c => c.tb_performance).FirstOrDefault(x => x.ID == id);
+
+            return View(Sperformance);
+        }
 
         // POST: Student/Delete/5
         [HttpPost, ActionName("Delete")]
@@ -130,6 +152,11 @@ namespace ManagementSystem.Controllers
         public ActionResult DeleteConfirmed(int id)
         {
             tb_student tb_student = db.tb_student.Find(id);
+
+            var classes = db.tb_class.Where(x => x.StudentID == id);
+            var performances = db.tb_performance.Where(x => x.StudentID == id);
+            db.tb_class.RemoveRange(classes);
+            db.tb_performance.RemoveRange(performances);
             db.tb_student.Remove(tb_student);
             db.SaveChanges();
             return RedirectToAction("Index");

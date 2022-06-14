@@ -1,0 +1,36 @@
+﻿@model ManagementSystem.Models.tb_class
+@{
+    ViewBag.Title = "RateTutor";
+    Layout = "";
+
+}
+
+
+@using (Html.BeginForm("Rate", "Class", FormMethod.Post, new { onsubmit = "return SubmitForm(this)" }))
+{
+    @Html.HiddenFor(model => model.Date)
+    @Html.HiddenFor(model => model.Duration)
+    @Html.HiddenFor(model => model.tb_user.Name)
+    @Html.HiddenFor(model => model.tb_package.Name)
+    @Html.HiddenFor(model => model.verifyStatus)
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.RatingTutor, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            <select id="ratingTutor" name="ratingTutor" class="form-control">
+                <option value="">-- Nilai Tutor --</option>
+                <option value="5">5</option>
+                <option value="4">4</option>
+                <option value="3">3</option>
+                <option value="2">2</option>
+                <option value="1">1</option>
+            </select>
+            @Html.ValidationMessageFor(model => model.RatingTutor, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group">
+        <input type="submit" value="Submit" class="btn btn-success" />
+        <input type="reset" value="Reset" class="btn btn-warning" />
+    </div>
+}

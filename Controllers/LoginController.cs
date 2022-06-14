@@ -42,6 +42,7 @@ namespace ManagementSystem.Controllers
                 else
                 {
                     Session["IC"] = userDetails.IC;
+                    Session["ID"] = userDetails.ID;
                     Session["Name"] = userDetails.Name;
                     Session["Role"] = userDetails.Role;
                     return RedirectToAction("Index", "Home");
@@ -97,7 +98,16 @@ namespace ManagementSystem.Controllers
            
             Session.Abandon();
             Session.Clear();
+            Session.RemoveAll();
+
+            System.Web.Security.FormsAuthentication.SignOut();
+            this.Response.Cache.SetExpires(DateTime.UtcNow.AddMinutes(-1));
+            this.Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            this.Response.Cache.SetNoStore();
+
             return RedirectToAction("Index","Login");
+
+
         }
     }
 }
