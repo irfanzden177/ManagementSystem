@@ -17,13 +17,23 @@ namespace ManagementSystem.Controllers
         // GET: Student
         public ActionResult Index()
         {
-            var tb_student = db.tb_student.Include(t => t.tb_batches).Include(t => t.tb_package);
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
+            var tb_student = db.tb_student.Include(t => t.tb_package);
             return View(tb_student.ToList());
         }
 
         // GET: Student/Details/5
         public ActionResult Details(int? id)
         {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -39,7 +49,11 @@ namespace ManagementSystem.Controllers
         // GET: Student/Create
         public ActionResult Create()
         {
-            ViewBag.BatchID = new SelectList(db.tb_batches, "ID", "ID");
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
             ViewBag.Package = new SelectList(db.tb_package, "ID", "Name");
             return View();
         }
@@ -51,6 +65,11 @@ namespace ManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "ID,Name,IC,Address,Date,Package,BatchID,RefNo")] tb_student tb_student)
         {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
             if (ModelState.IsValid)
             {
                 db.tb_student.Add(tb_student);
@@ -58,7 +77,6 @@ namespace ManagementSystem.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.BatchID = new SelectList(db.tb_batches, "ID", "ID", tb_student.BatchID);
             ViewBag.Package = new SelectList(db.tb_package, "ID", "Name", tb_student.Package);
             return View(tb_student);
         }
@@ -66,6 +84,11 @@ namespace ManagementSystem.Controllers
         // GET: Student/Edit/5
         public ActionResult Edit(int? id)
         {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -75,7 +98,7 @@ namespace ManagementSystem.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.BatchID = new SelectList(db.tb_batches, "ID", "ID", tb_student.BatchID);
+        
             ViewBag.Package = new SelectList(db.tb_package, "ID", "Name", tb_student.Package);
             return View(tb_student);
         }
@@ -87,13 +110,17 @@ namespace ManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "ID,Name,IC,Address,Date,Package,BatchID,RefNo")] tb_student tb_student)
         {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
             if (ModelState.IsValid)
             {
                 db.Entry(tb_student).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.BatchID = new SelectList(db.tb_batches, "ID", "ID", tb_student.BatchID);
             ViewBag.Package = new SelectList(db.tb_package, "ID", "Name", tb_student.Package);
             return View(tb_student);
         }
@@ -101,6 +128,11 @@ namespace ManagementSystem.Controllers
         // GET: Student/Delete/5
         public ActionResult Delete(int? id)
         {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -112,47 +144,19 @@ namespace ManagementSystem.Controllers
             }
             return View(tb_student);
         }
-        public ActionResult ViewReport(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-
-            var Sreport = db.tb_student.Include(p => p.tb_performance).Include(c => c.tb_class).FirstOrDefault(x => x.ID == id);
-            
-            return View(Sreport);
-        }
-        public ActionResult ViewClass(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-
-            var Sclass = db.tb_student.Include(c => c.tb_class).FirstOrDefault(x => x.ID == id);
-
-            return View(Sclass);
-        }
-        public ActionResult MyPerformance(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-
-            var Sperformance = db.tb_student.Include(c => c.tb_performance).FirstOrDefault(x => x.ID == id);
-
-            return View(Sperformance);
-        }
+ 
 
         // POST: Student/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            tb_student tb_student = db.tb_student.Find(id);
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
 
+            tb_student tb_student = db.tb_student.Find(id);
             var classes = db.tb_class.Where(x => x.StudentID == id);
             var performances = db.tb_performance.Where(x => x.StudentID == id);
             db.tb_class.RemoveRange(classes);
@@ -170,5 +174,59 @@ namespace ManagementSystem.Controllers
             }
             base.Dispose(disposing);
         }
+
+        public ActionResult ViewReport(int? id)
+        {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var Sreport = db.tb_student.Include(p => p.tb_performance).Include(c => c.tb_class).FirstOrDefault(x => x.ID == id);
+
+            return View(Sreport);
+        }
+        public ActionResult ViewClass(int? id)
+        {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var Sclass = db.tb_student.Include(c => c.tb_class).FirstOrDefault(x => x.ID == id);
+
+            return View(Sclass);
+        }
+        public ActionResult MyPerformance(int? id)
+        {
+             if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var Sperformance = db.tb_student.Include(c => c.tb_performance).FirstOrDefault(x => x.ID == id);
+
+            return View(Sperformance);
+        }
+
+
+
+
+
     }
 }

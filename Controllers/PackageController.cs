@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using ManagementSystem.Models;
+using static ManagementSystem.Models.tb_package;
 
 namespace ManagementSystem.Controllers
 {
@@ -17,7 +18,13 @@ namespace ManagementSystem.Controllers
         // GET: Package
         public ActionResult Index()
         {
-            return View(db.tb_package.ToList());
+
+            var test = db.tb_student.GroupBy(t => t.Package).Select(packageGroup => new testPackage { Package1 = (int)packageGroup.Key, StudentCount = packageGroup.Count() }).ToList();
+            ViewBag.test = test;
+
+            var tb_package = db.tb_package.Include(t => t.tb_student);
+
+            return View(tb_package.ToList());
         }
 
         // GET: Package/Details/5
@@ -46,7 +53,7 @@ namespace ManagementSystem.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,Name")] tb_package tb_package)
+        public ActionResult Create([Bind(Include = "ID,Name,Masa,Sesi,Fee,Description")] tb_package tb_package)
         {
             if (ModelState.IsValid)
             {
@@ -78,7 +85,7 @@ namespace ManagementSystem.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,Name")] tb_package tb_package)
+        public ActionResult Edit([Bind(Include = "ID,Name,Masa,Sesi,Fee,Description")] tb_package tb_package)
         {
             if (ModelState.IsValid)
             {

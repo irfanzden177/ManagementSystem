@@ -5,9 +5,21 @@ using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Google.Apis.Auth.OAuth2;
+using Google.Apis.Auth.OAuth2.Flows;
+using Google.Apis.Auth.OAuth2.Web;
+using Google.Apis.Util;
+using Google.Apis.Util.Store;
+using MailKit.Net.Smtp;
+using MailKit.Security;
 using ManagementSystem.Models;
+using MimeKit;
+using MimeKit.Text;
 
 namespace ManagementSystem.Controllers
 {
@@ -18,13 +30,23 @@ namespace ManagementSystem.Controllers
         // GET: User
         public ActionResult Index()
         {
-            var tb_user = db.tb_user.Include(t => t.tb_status).Include(t => t.tb_batches);
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
+            var tb_user = db.tb_user.Include(t => t.tb_status);
             return View(tb_user.ToList());
         }
 
         // GET: User/Details/5
         public ActionResult Details(int? id)
         {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -40,8 +62,13 @@ namespace ManagementSystem.Controllers
         // GET: User/Create
         public ActionResult Create()
         {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
             ViewBag.Status = new SelectList(db.tb_status, "ID", "Description");
-            ViewBag.BatchID = new SelectList(db.tb_batches, "ID", "ID");
+           
             return View();
         }
 
@@ -52,6 +79,11 @@ namespace ManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "ID,IC,Name,Role,Password,Email,Contact,Status,BatchID")] tb_user tb_user)
         {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
             if (ModelState.IsValid)
             {
                 var unhashedPass = tb_user.Password;
@@ -62,13 +94,18 @@ namespace ManagementSystem.Controllers
             }
 
             ViewBag.Status = new SelectList(db.tb_status, "ID", "Description", tb_user.Status);
-            ViewBag.BatchID = new SelectList(db.tb_batches, "ID", "ID", tb_user.BatchID);
+          
             return View(tb_user);
         }
 
         // GET: User/Edit/5
         public ActionResult Edit(int? id)
         {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -79,7 +116,7 @@ namespace ManagementSystem.Controllers
                 return HttpNotFound();
             }
             ViewBag.Status = new SelectList(db.tb_status, "ID", "Description", tb_user.Status);
-            ViewBag.BatchID = new SelectList(db.tb_batches, "ID", "ID", tb_user.BatchID);
+           
             return View(tb_user);
         }
 
@@ -90,6 +127,11 @@ namespace ManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "ID,IC,Name,Role,Password,Email,Contact,Status,BatchID")] tb_user tb_user)
         {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
             if (ModelState.IsValid)
             {
                 db.Entry(tb_user).State = EntityState.Modified;
@@ -97,13 +139,18 @@ namespace ManagementSystem.Controllers
                 return RedirectToAction("Index");
             }
             ViewBag.Status = new SelectList(db.tb_status, "ID", "Description", tb_user.Status);
-            ViewBag.BatchID = new SelectList(db.tb_batches, "ID", "ID", tb_user.BatchID);
+            
             return View(tb_user);
         }
 
         // GET: User/Delete/5
         public ActionResult Delete(int? id)
         {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -121,9 +168,42 @@ namespace ManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
             tb_user tb_user = db.tb_user.Find(id);
+            var classes = db.tb_class.Where(x => x.TutorID == id);
+            var salary = db.tb_salary.Where(x => x.TutorID == id);
+            db.tb_class.RemoveRange(classes);
+            db.tb_salary.RemoveRange(salary);
             db.tb_user.Remove(tb_user);
             db.SaveChanges();
+
+
+            ////email code
+            
+
+
+            //// create email message
+            //var email = new MimeMessage();
+            //email.From.Add(MailboxAddress.Parse("mengaji121@yahoo.com"));
+            //email.To.Add(MailboxAddress.Parse("arifffansurirazak@gmail.com"));
+            //email.Subject = "Test Email Subject";
+            //email.Body = new TextPart(TextFormat.Plain) { Text = "Example Plain Text Message Body" };
+
+            //// send email
+            //using (var smtp = new SmtpClient())
+            //{
+            //    smtp.Connect("smtp.mail.yahoo.com", 587, SecureSocketOptions.StartTls);
+            //    smtp.Authenticate("mengaji121@yahoo.com", "oypqfmgwbomycrzs");
+            //    smtp.Send(email);
+            //    smtp.Disconnect(true);
+            //}
+            
+            ////end email code
+
             return RedirectToAction("Index");
         }
 

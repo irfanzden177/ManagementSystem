@@ -17,7 +17,7 @@
             <div class="table-responsive">
                 <h6 text-align="center">Butiran Maklumat</h6>
 
-                <hr>
+                <hr />
                 <dl class="dl-horizontal">
                     <dt>
                         @Html.DisplayNameFor(model => model.IC)
@@ -43,13 +43,7 @@
                         @Html.DisplayFor(model => model.Role)
                     </dd>
 
-                    <dt>
-                        @Html.DisplayNameFor(model => model.Password)
-                    </dt>
-
-                    <dd>
-                        @Html.DisplayFor(model => model.Password)
-                    </dd>
+             
 
                     <dt>
                         @Html.DisplayNameFor(model => model.Email)
@@ -68,19 +62,19 @@
                     </dd>
 
                     <dt>
+                        @Html.DisplayNameFor(model => model.BatchID)
+                    </dt>
+
+                    <dd>
+                        @Html.DisplayFor(model => model.BatchID)
+                    </dd>
+
+                    <dt>
                         @Html.DisplayNameFor(model => model.tb_status.Description)
                     </dt>
 
                     <dd>
                         @Html.DisplayFor(model => model.tb_status.Description)
-                    </dd>
-
-                    <dt>
-                        @Html.DisplayNameFor(model => model.tb_batches.ID)
-                    </dt>
-
-                    <dd>
-                        @Html.DisplayFor(model => model.tb_batches.ID)
                     </dd>
 
                 </dl>
@@ -89,11 +83,10 @@
                 {
                     @Html.AntiForgeryToken()
 
-
-            <div class="form-actions no-color">
-                <input type="submit" value="Padam" class="btn btn-danger" /> |
-                @Html.ActionLink("Kembali", "Index", null, new { @class = "btn btn-outline-primary" })
-            </div>
+                    <div class="form-actions no-color">
+                        <input type="submit" value="Padam" class="btn btn-danger" /> |
+                        @Html.ActionLink("Kembali", "Index", null, new { @class = "btn btn-outline-primary" })
+                    </div>
                 }
             </div>
         </div>

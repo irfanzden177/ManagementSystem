@@ -12,14 +12,6 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="tb_batches">
-      <EntityTypeMapping TypeName="ManagementSystemModel.tb_batches">
-        <MappingFragment StoreEntitySet="tb_batches">
-          <ScalarProperty Name="ID" ColumnName="ID" />
-          <ScalarProperty Name="CreateDate" ColumnName="CreateDate" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="tb_class">
       <EntityTypeMapping TypeName="ManagementSystemModel.tb_class">
         <MappingFragment StoreEntitySet="tb_class">
@@ -41,6 +33,10 @@
     <EntitySetMapping Name="tb_package">
       <EntityTypeMapping TypeName="ManagementSystemModel.tb_package">
         <MappingFragment StoreEntitySet="tb_package">
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="Fee" ColumnName="Fee" />
+          <ScalarProperty Name="Sesi" ColumnName="Sesi" />
+          <ScalarProperty Name="Masa" ColumnName="Masa" />
           <ScalarProperty Name="ID" ColumnName="ID" />
           <ScalarProperty Name="Name" ColumnName="Name" />
         </MappingFragment>

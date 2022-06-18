@@ -17,6 +17,11 @@ namespace ManagementSystem.Controllers
         // GET: Salary
         public ActionResult Index()
         {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
             var tb_salary = db.tb_salary.Include(t => t.tb_user);
             return View(tb_salary.ToList());
         }
@@ -24,6 +29,11 @@ namespace ManagementSystem.Controllers
         // GET: Salary/Details/5
         public ActionResult Details(int? id)
         {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -39,6 +49,11 @@ namespace ManagementSystem.Controllers
         // GET: Salary/Create
         public ActionResult Create()
         {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
             ViewBag.TutorID = new SelectList(db.tb_user, "ID", "IC");
             
 
@@ -46,7 +61,7 @@ namespace ManagementSystem.Controllers
                 .Select(s => new
                 {
                     Text = s.Name + " - " + s.IC,
-                    Value = s.IC
+                    Value = s.ID
                 })
                 .ToList();
 
@@ -61,8 +76,25 @@ namespace ManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "ID,Amount,TutorID,month,Status,Date")] tb_salary tb_salary)
         {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
+            var listClasses = db.tb_class.Where(s => s.Date.Month == tb_salary.month && s.TutorID == tb_salary.TutorID).Select(s=>s.Duration).DefaultIfEmpty().Sum();
+            var rateSalary = db.tb_salaryRate.OrderByDescending(x => x.DateCreated).FirstOrDefault().SalaryRate;
+
+            if(listClasses==0)
+            {
+                return RedirectToAction("Index");
+
+            }
+
+            var SalaryAmount = (decimal)listClasses * rateSalary / 60;
+
             if (ModelState.IsValid)
             {
+                tb_salary.Amount = (double?)SalaryAmount;
                 db.tb_salary.Add(tb_salary);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -75,6 +107,11 @@ namespace ManagementSystem.Controllers
         // GET: Salary/Edit/5
         public ActionResult Edit(int? id)
         {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -95,6 +132,26 @@ namespace ManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "ID,Amount,TutorID,month,Status,Date")] tb_salary tb_salary)
         {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
+            var listClasses = db.tb_class.Where(s => s.Date.Month == tb_salary.month && s.TutorID == tb_salary.TutorID && s.verifyStatus == 1).Select(s => s.Duration).DefaultIfEmpty().Sum();
+
+            var rateSalary = db.tb_salaryRate.OrderByDescending(x => x.DateCreated).FirstOrDefault().SalaryRate;
+
+            if (listClasses==0)
+            {
+                return RedirectToAction("Index");
+            }
+
+            var salaryAmount = (decimal)listClasses * rateSalary / 60;
+            if(tb_salary.Status==null)
+            {
+                ModelState.AddModelError("Status", "Status tidak Diisi");
+                return View(tb_salary);
+            }
             if (ModelState.IsValid)
             {
                 db.Entry(tb_salary).State = EntityState.Modified;
@@ -108,6 +165,11 @@ namespace ManagementSystem.Controllers
         // GET: Salary/Delete/5
         public ActionResult Delete(int? id)
         {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -122,6 +184,11 @@ namespace ManagementSystem.Controllers
 
         public ActionResult ViewInvoice (int?id)
         {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
@@ -138,6 +205,11 @@ namespace ManagementSystem.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
             tb_salary tb_salary = db.tb_salary.Find(id);
             db.tb_salary.Remove(tb_salary);
             db.SaveChanges();
@@ -151,6 +223,41 @@ namespace ManagementSystem.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+        public ActionResult GenerateAllSalary()
+        {
+            var listLecturer = db.tb_user.Select(x => x.ID).ToList();
+
+            foreach (var lect in listLecturer)
+            {
+                var listClasses = 0;
+                var rateSalary = (decimal)0.00;
+
+                listClasses = db.tb_class.Where(s => s.Date.Month == DateTime.Now.Month && s.TutorID == lect).Select(s => s.Duration).DefaultIfEmpty().Sum();
+                rateSalary = (decimal)db.tb_salaryRate.OrderByDescending(x => x.DateCreated).FirstOrDefault().SalaryRate;
+
+                if (listClasses == 0)
+                {
+                    continue;
+                }
+                else
+                {
+                    var SalaryAmount = (decimal)listClasses * rateSalary / 60;
+
+                    tb_salary input = null;
+
+                    input = new tb_salary();
+                    input.Amount = (double?)SalaryAmount;
+                    input.TutorID = lect;
+                    input.month = DateTime.Now.Month;
+                    input.Status = "Tidak Selesai";
+                    input.Date = DateTime.Now;
+                    db.tb_salary.Add(input);
+                    db.SaveChanges();
+                }
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }

@@ -25,19 +25,18 @@ namespace ManagementSystem.Models
     
         public int ID { get; set; }
         [DisplayName("Nombor Kad Pengenalan")]
-        [Required(ErrorMessage = "Ruangan ini perlu diisi")]
+        [Range(0, int.MaxValue, ErrorMessage = "Sila masukkan nombor kad pengenalan yang betul")]
         public string IC { get; set; }
         [DisplayName("Nama Penuh")]
         public string Name { get; set; }
         [DisplayName("Pengguna")]
-        [Required(ErrorMessage = "Ruangan ini perlu diisi")]
         public Nullable<int> Role { get; set; }
         [DisplayName("Kata Laluan")]
-        [Required(ErrorMessage = "Ruangan ini perlu diisi")]
         public string Password { get; set; }
         [DisplayName("Emel")]
         public string Email { get; set; }
         [DisplayName("Nombor Telefon")]
+        [Range(0, int.MaxValue, ErrorMessage = "Sila masukkan nombor telefon yang betul")]
         public string Contact { get; set; }
         [DisplayName("Status")]
         public Nullable<int> Status { get; set; }
@@ -50,6 +49,5 @@ namespace ManagementSystem.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<tb_salary> tb_salary { get; set; }
         public virtual tb_status tb_status { get; set; }
-        public virtual tb_batches tb_batches { get; set; }
     }
 }

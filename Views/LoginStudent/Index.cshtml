@@ -25,6 +25,12 @@
     <!-- Custom styles for this template-->
     <link href="~/Content/css/sb-admin-2.min.css" rel="stylesheet">
 
+    <style>
+        .field-validation-error {
+            color: red;
+        }
+    </style>
+
 </head>
 
 <body class="bg-gradient-primary">
@@ -45,7 +51,9 @@
                                 <img src="~/Content/system-white.png" width="500" height="350" class="center" />
                             </div>
                             <div class="col-lg-6">
+
                                 <div class="p-5">
+                                    <button class="btn btn-outline-primary ">@Html.ActionLink("Kembali", "Index", "MainPage") </button>
                                     <div class="text-center">
                                         <br>
                                         <br>

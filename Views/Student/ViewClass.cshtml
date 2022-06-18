@@ -13,7 +13,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - Management System</title>
-    
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -29,8 +29,6 @@
 
     <!-- Custom styles for this template-->
     <link href="~/Content/css/sb-admin-2.min.css" rel="stylesheet">
-    <link href="~/Content/themes/base/jquery-ui.min.css" rel="stylesheet" />
-
 
 </head>
 
@@ -52,10 +50,10 @@
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
-                <a class="nav-link" href="@Url.Action("ViewClass", "Student", new { id = Session["ID"] })">
+            <li class="nav-item ">
+                <a class="nav-link" href="@Url.Action("About", "Home")">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
-                    <span>Laman Utama-Lihat Kelas</span>
+                    <span>Laman Utama</span>
                 </a>
             </li>
 
@@ -64,7 +62,7 @@
 
             <!-- Heading -->
             <div class="sidebar-heading">
-                Kemaskini
+                Lihat
             </div>
 
 
@@ -72,12 +70,21 @@
             <!-- Nav Item - Tables -->
             <!-- Nav Item - Tables -->
             <li class="nav-item ">
+                <a class="nav-link" href="@Url.Action("ViewClass", "Student", new { id = Session["ID"] })">
+
+                    <i class="fas fa-fw fa-table"></i>
+                    <span>Lihat Kelas</span>
+                </a>
                 <a class="nav-link" href="@Url.Action("MyPerformance", "Student", new { id = Session["ID"] })">
 
                     <i class="fas fa-fw fa-table"></i>
                     <span>Lihat Prestasi</span>
                 </a>
-                <a class="nav-link" href="tables.html">
+                <!-- Heading -->
+                <div class="sidebar-heading">
+                    Kemaskini
+                </div>
+                <a class="nav-link" href="@Url.Action("DetailsStudent", "Profile", new { id = Session["ID"] })">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Kemaskini Profil</span>
                 </a>
@@ -96,6 +103,7 @@
 
                 <!-- Topbar -->
                 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                    <p><a href="https://docs.google.com/document/d/1Pm0SKhlSjRj-n9s89CivcjB_wXSNmNX6iGh7gNEBLc8/edit?usp=sharing/" class="btn btn-primary" target="_blank">Panduan Pengguna</a></p>
 
                     <!-- Sidebar Toggle (Topbar) -->
                     <form class="form-inline">
@@ -134,20 +142,23 @@
                         </li>
 
 
+
+
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Profil @Session["Name"] <i class="fa fa-angle-down"></i> </span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Profile @Session["Name"] <i class="fa fa-angle-down"></i> </span>
 
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                  aria-labelledby="userDropdown">
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="@Url.Action("DetailsStudent", "Profile", new { id = Session["ID"] })">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Profile
                                 </a>
+
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="@Url.Action("Index", "MainPage")" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
@@ -170,7 +181,8 @@
                                     <div class="modal-body">Sila tekan Logout semula untuk kepastian</div>
                                     <div class="modal-footer">
                                         <button class="btn btn-secondary" type="button" data-dismiss="modal">Batal</button>
-                                        <a class="btn btn-primary" href="@Url.Action("Index", "MainPage")">Logout</a>
+                                        @*<a class="btn btn-primary" href="@Url.Action("Index", "MainPage")">Log Keluar</a>*@
+                                        @Html.ActionLink("Log Keluar Student", "Logout", "LoginStudent", null, new { @class = "btn btn-primary" })
                                     </div>
                                 </div>
                             </div>
@@ -187,7 +199,7 @@
                         <h3 class="h3 mb-0 text-gray-800">Selamat Datang, @Session["Name"]</h3>
 
                         <br>
-                        <h1 class="h3 mb-0 text-gray-800">Laman Utama</h1>
+                        <h1 class="h3 mb-0 text-gray-800">Senarai Kelas</h1>
                     </div>
                 </div>
                 <body>
@@ -202,34 +214,28 @@
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
 
-                    <!-- Page Heading -->
-                    <h5>  Senarai Kelas </h5>
+
 
 
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+
+                            <h6 class="m-0 font-weight-bold text-primary">Senarai Kelas</h6>
+                        </div>
 
 
                         <div class="card-body">
                             <div class="table-responsive">
 
 
-                                <h5>  Cari</h5>
-                                <div class="input-group">
-                                    <input type="text" id="myInput" class="form-control bg-light border-0 small" onkeyup="myFunction()" placeholder="Sila masukkan tarikh"
-                                           aria-label="Search" aria-describedby="basic-addon2">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-primary" type="button">
-                                            <i class="fas fa-search fa-sm"></i>
-                                        </button>
-                                    </div>
-                                </div>
 
 
-                                <br>
 
-                                <hr>
-                                <table class="table table-bordered" id="myTable" width="100%" cellspacing="0">
+                        
+
+                              
+                                <table class="table table-bordered" id="example1" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
 
@@ -271,15 +277,12 @@
                                                 <td>
                                                     @Html.DisplayFor(modelItem => item.tb_package.Name)
                                                 </td>
+
                                                 <td>
                                                     @if (item.RatingTutor == null)
                                                     {
-                                                        @*<a class="btn btn-success" style="margin-bottom:10px" onclick="PopupForm('@Url.Action("Rate","Class", new { id = item.ID })')">
-                <i class="fa fa-plus"></i> Nilai Tutor
-            </a>*@
-                                                        @*<a class="btn btn-success" style="margin-bottom:10px" onclick="('@Url.Action("RateTutor2","Class", new { id = item.ID })')">
-                                                            <i class="fa fa-plus"></i> Nilai Tutor
-                                                        </a>*@
+
+
                                                         <button class="btn btn-outline-success ">@Html.ActionLink("Nilai Tutor", "RateTutor2", "Class", new { id = item.ID }, new { @target = "_blank" }) </button>
                                                     }
                                                     else
@@ -288,9 +291,8 @@
                                                     }
                                                 </td>
 
-
-
                                                 <td>
+
 
                                                     @if (item.verifyStatus != 1)
                                                     {
@@ -307,36 +309,26 @@
                                             </tr>
                                         }
                                     </tbody>
-
                                 </table>
-                                @*<div class="formPopup" id="popupForm">
-                                    @using (Html.BeginForm("Rate", "Class", FormMethod.Post, new))
-                                    <form action="/RateTutor.cshtml" class="formContainer"> </form>
-                                </div>*@
-
-                                        <script src="~/Scripts/jquery-ui-1.13.1.min.js"></script>
-                                        <script>
-
-                                    var Popup;
-
-                                        function myFunction() {
-                                            var input, filter, table, tr, td, i, txtValue;
-                                            input = document.getElementById("myInput");
-                                            filter = input.value.toUpperCase();
-                                            table = document.getElementById("myTable");
-                                            tr = table.getElementsByTagName("tr");
-                                            for (i = 0; i < tr.length; i++) {
-                                                td = tr[i].getElementsByTagName("td")[0];
-                                                if (td) {
-                                                    txtValue = td.textContent || td.innerText;
-                                                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                                                        tr[i].style.display = "";
-                                                    } else {
-                                                        tr[i].style.display = "none";
-                                                    }
-                                                }
-                                            }
-                                        }
+                                <script>
+                                        //function myFunction() {
+                                        //    var input, filter, table, tr, td, i, txtValue;
+                                        //    input = document.getElementById("myInput");
+                                        //    filter = input.value.toUpperCase();
+                                        //    table = document.getElementById("myTable");
+                                        //    tr = table.getElementsByTagName("tr");
+                                        //    for (i = 0; i < tr.length; i++) {
+                                        //        td = tr[i].getElementsByTagName("td")[0];
+                                        //        if (td) {
+                                        //            txtValue = td.textContent || td.innerText;
+                                        //            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                        //                tr[i].style.display = "";
+                                        //            } else {
+                                        //                tr[i].style.display = "none";
+                                        //            }
+                                        //        }
+                                        //    }
+                                        //}
                                         function verify(s) {
                                             // Creating Our XMLHttpRequest object
                                             if (confirm("Anda pasti mahu sahkan kelas?")) {
@@ -358,71 +350,9 @@
                                             }
 
                                         }
-
-                                        function PopupForm(url) {
-                                            var formDiv = $('<div/>');
-                                            $.get(url)
-                                                .done(function (response) {
-                                                    formDiv.html(response);
-
-                                                    Popup = formDiv.dialog({
-                                                        autoOpen: true,
-                                                        resizable: false,
-                                                        title: 'Nilai Tutor',
-                                                        height: 500,
-                                                        width: 700,
-                                                        close: function () {
-                                                            Popup.dialog('destroy').remove();
-                                                        }
-                                                    });
-                                                });
-                                        }
-
-                                        function SubmitForm(form) {
-                                            $.validator.unobtrusive.parse(form);
-
-                                            if ($(form).valid()) {
-                                                $.ajax({
-                                                    type: "POST",
-                                                    url: form.action,
-                                                    data: $(form).serialize(),
-                                                    success: function (data) {
-                                                        if (data.success) {
-                                                            Popup.dialog('close');
-                                                            dataTable.ajax.reload();
-
-                                                            $.notify(data.message, {
-                                                                globalPosition: "top center",
-                                                                className: "success"
-                                                            })
-                                                        }
-                                                    }
-                                                });
-                                            }
-                                            return false;
-                                    }
-
-                                    @*function openForm(i) {
-                                        //document.getElementById("popupForm").style.display = "block";
-                                        <div class="formPopup" id="popupForm">
-                                            @using (Html.BeginForm("Rate", "Class", FormMethod.Post, new))
-                                            <form action="/RateTutor.cshtml" class="formContainer"> </form>
-                                         </div>
-                                    }*@
-
-
-
-                                    // Get the button, and when the user clicks on it, execute myFunction
-                                    //document.getElementById("myBtn").onclick = function (item.ID) { myFunction(item.ID) };
-
-                                    /* myFunction toggles between adding and removing the show class, which is used to hide and show the dropdown content */
-                                    //function myFunction(value) {
-                                    //    document.getElementById("myDropdown").classList.toggle("show");
-                                    //}
-
-                                        </script>
-                                </div>
+                                </script>
                             </div>
+                        </div>
                     </div>
                     <footer class="sticky-footer bg-white">
                         <div class="container my-auto">
@@ -431,6 +361,34 @@
                             </div>
                         </div>
                     </footer>
+
+                    <!-- Bootstrap core JavaScript-->
+                    <script src="~/Content/vendor/jquery/jquery.min.js"></script>
+                    <script src="~/Content/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+                    <!-- Core plugin JavaScript-->
+                    <script src="~/Content/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+                    <!-- Custom scripts for all pages-->
+                    <script src="~/Content/js/sb-admin-2.min.js"></script>
+
+                    <!-- Page level plugins -->
+                    <!--<script src="~/Content/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="~/Content/vendor/datatables/dataTables.bootstrap4.min.js"></script>-->
+
+                    <!-- Page level custom scripts -->
+                    <!--<script src="~/Content/js/demo/datatables-demo.js"></script>-->
+                    <link href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" rel="stylesheet" />
+
+                    <script src=" https://code.jquery.com/jquery-3.5.1.js"></script>
+                    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+
+                    <script>
+                        $('#example1').DataTable({
+                            order: [[0, 'desc']],
+                        });
+                    </script>
 </body>
+
 
 
