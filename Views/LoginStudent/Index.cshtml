@@ -53,7 +53,7 @@
                             <div class="col-lg-6">
 
                                 <div class="p-5">
-                                    <button class="btn btn-outline-primary ">@Html.ActionLink("Kembali", "Index", "MainPage") </button>
+                                    
                                     <div class="text-center">
                                         <br>
                                         <br>
@@ -83,7 +83,7 @@
                                             </tr>
                                             <tr>
                                                 <td> @Html.LabelFor(model => Model.IC)</td>
-                                                <td> @Html.PasswordFor(model => model.IC)</td>
+                                                <td> @Html.EditorFor(model => model.IC)</td>
                                             </tr>
                                             <tr>
                                                 <td></td>
@@ -100,10 +100,12 @@
                                                 <td></td>
                                                 <td>
 
-                                                    <input type="submit" class="btn-primary" name="name" value="Login" />
+                                                    <input type="submit" class="btn btn-primary" name="name" value="Log Masuk" />
 
 
-                                                    <input type="reset" name="name" class="btn-success" value="Clear" />
+                                                    <input type="reset" name="name" class="btn btn-warning" value="Reset" />
+                                                    <br /><br />
+                                                    @Html.ActionLink("Kembali", "Index", "MainPage", null, new { @class = "btn btn-outline-primary" })
                                                 </td>
                                             </tr>
 

@@ -11,14 +11,18 @@ namespace ManagementSystem.Models
 {
     using System;
     using System.Collections.Generic;
-    
+    using System.ComponentModel.DataAnnotations;
+
     public partial class tb_class
     {
         public int ID { get; set; }
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
         public System.DateTime Date { get; set; }
+        [Range(0, Int64.MaxValue, ErrorMessage = "Sila masukkan tempoh kelas yang betul")]
         public int Duration { get; set; }
         public int Package { get; set; }
         public Nullable<int> TutorID { get; set; }
+        [Required(ErrorMessage = "Ruang ini perlu diisi")]
         public Nullable<int> StudentID { get; set; }
         public string Description { get; set; }
         public Nullable<System.DateTime> CheckIn { get; set; }

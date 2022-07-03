@@ -1,4 +1,4 @@
-﻿@{
+@{
 
     if (Session["ID"] == null)
     {
@@ -50,9 +50,7 @@
     <!-- Page level custom scripts -->
     <script src="~/Content/js/demo/chart-area-demo.js"></script>
     <script src="~/Content/js/demo/chart-pie-demo.js"></script>
-
-    
-
+ 
 
 </head>
 
@@ -130,51 +128,58 @@
                         <span>Kemaskini Pakej</span>
                     </a>
                 </li>
-
-
-            }
-            @if (@Session["Role"].ToString() == "2")
-            {
-
+                
                 <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("Index", "Class")">
+                    <a class="nav-link" href="@Url.Action("ViewAllClass", "Class")">
                         <i class="fas fa-edit"></i>
-                        <span>Kemaskini Kelas</span>
+                        <span>Kemaskini Kelas Pelajar</span>
                     </a>
                 </li>
+
+
+                }
+                @if (@Session["Role"].ToString() == "2")
+                {
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Index", "Class")">
+                            <i class="fas fa-edit"></i>
+                            <span>Kemaskini Kelas</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Index", "Performance")">
+                            <i class="fas fa-edit"></i>
+                            <span>Kemaskini Prestasi Pelajar</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <script>
+                        window.Location = "~/Login/Index"
+                    </script>
+                }
+                <!-- Divider -->
+                <hr class="sidebar-divider">
+
+                <!-- Heading -->
+                <div class="sidebar-heading">
+                    Pengguna
+                </div>
+
+                <!-- Nav Item - Pages Collapse Menu -->
+                <!-- Nav Item - Tables -->
                 <li class="nav-item">
-                    <a class="nav-link" href="@Url.Action("Index", "Performance")">
-                        <i class="fas fa-edit"></i>
-                        <span>Kemaskini Prestasi Pelajar</span>
+                    <a class="nav-link" href="@Url.Action("Details", "Profile", new { id = Session["ID"] })">
+                        <i class="fas fa-user"></i>
+                        <span>Kemaskini Profil</span>
                     </a>
                 </li>
-            }
-            else
-            {
-                <script>
-                    window.Location = "~/Login/Index"
-                </script>
-            }
-            <!-- Divider -->
-            <hr class="sidebar-divider">
+                <!-- Divider -->
+                <hr class="sidebar-divider d-none d-md-block">
 
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Pengguna
-            </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <!-- Nav Item - Tables -->
-            <li class="nav-item">
-                <a class="nav-link" href="@Url.Action("Details", "Profile", new { id = Session["ID"] })">
-                    <i class="fas fa-user"></i>
-                    <span>Kemaskini Profil</span>
-                </a>
-            </li>
-            <!-- Divider -->
-            <hr class="sidebar-divider d-none d-md-block">
-
-        </ul>
+            </ul>
         <!-- End of Sidebar -->
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
@@ -241,13 +246,13 @@
                                  aria-labelledby="userDropdown">
                                 <a class="dropdown-item" href="@Url.Action("Details", "Profile", new { id = Session["ID"] })">
                                     <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Profile
+                                    Kemaskini Profil
                                 </a>
 
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="@Url.Action("Index", "MainPage")" data-toggle="modal" data-target="#logoutModal">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                                    Logout
+                                    Log Keluar
                                 </a>
 
 
@@ -263,7 +268,7 @@
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="exampleModalLabel">Anda pasti anda ingin Log Keluar?</h5>
                                         <button class="close" type="button" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">×</span>
+                                            <span aria-hidden="true">X</span>
                                         </button>
                                     </div>
                                     <div class="modal-body">Sila tekan Logout semula untuk kepastian</div>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Web;
@@ -97,6 +98,7 @@ namespace ManagementSystem.Controllers
                 tb_salary.Amount = (double?)SalaryAmount;
                 db.tb_salary.Add(tb_salary);
                 db.SaveChanges();
+                TempData["AlertMessage"] = "Rekod gaji berjaya disimpan.";
                 return RedirectToAction("Index");
             }
 
@@ -143,7 +145,7 @@ namespace ManagementSystem.Controllers
 
             if (listClasses==0)
             {
-                return RedirectToAction("Index");
+                ModelState.AddModelError("", "Tarikh Gaji tidak sepadan dengan Bulan. Sila semak semula butiran yang dimasukkan");
             }
 
             var salaryAmount = (decimal)listClasses * rateSalary / 60;
@@ -156,6 +158,7 @@ namespace ManagementSystem.Controllers
             {
                 db.Entry(tb_salary).State = EntityState.Modified;
                 db.SaveChanges();
+                TempData["AlertMessage"] = "Rekod gaji berjaya dikemaskini.";
                 return RedirectToAction("Index");
             }
             ViewBag.TutorID = new SelectList(db.tb_user, "ID", "IC", tb_salary.TutorID);
@@ -182,7 +185,7 @@ namespace ManagementSystem.Controllers
             return View(tb_salary);
         }
 
-        public ActionResult ViewInvoice (int?id)
+        public ActionResult ViewInvoice (int? id)
         {
             if (Session["Role"] == null)
             {
@@ -200,6 +203,36 @@ namespace ManagementSystem.Controllers
 
 
         }
+
+        public ActionResult ViewAppendix(int? tid, int? month)
+        {
+            if (Session["Role"] == null)
+            {
+                return RedirectToAction("Index", "MainPage");
+            }
+
+            if (tid == null && month == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var query = db.tb_class.Include(t => t.tb_student).Include(t=>t.tb_user)
+                .Where(c => c.TutorID == tid && c.Date.Month == month)
+                //.Select(c => new { c.tb_student.Name, c.Date, c.CheckIn, c.CheckOut, c.verifyStatus })
+                .OrderBy(c => c.Date);
+
+            ViewBag.TutorName = query.Select(n => n.tb_user.Name).FirstOrDefault();
+            ViewBag.TutorContact = query.Select(n => n.tb_user.Contact).FirstOrDefault();
+            ViewBag.Month = month;
+            ViewBag.Year = query.Select(n=>n.Date).FirstOrDefault().Year;
+            ViewBag.SalaryRate = (decimal)db.tb_salaryRate.OrderByDescending(x => x.DateCreated).FirstOrDefault().SalaryRate;
+
+            //return Json(query, JsonRequestBehavior.AllowGet);
+            return View(query);
+
+            // SELECT * FROM tb_class LEFT JOIN tb_studentON tb_class.StudentID = tb_student.ID WHERE tb_class.TutorID = 1 AND MONTH(tb_class.Date) = 6;
+        }
+
         // POST: Salary/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -213,6 +246,7 @@ namespace ManagementSystem.Controllers
             tb_salary tb_salary = db.tb_salary.Find(id);
             db.tb_salary.Remove(tb_salary);
             db.SaveChanges();
+            TempData["AlertMessage"] = "Rekod gaji berjaya dipadam.";
             return RedirectToAction("Index");
         }
 
@@ -224,6 +258,7 @@ namespace ManagementSystem.Controllers
             }
             base.Dispose(disposing);
         }
+
         public ActionResult GenerateAllSalary()
         {
             var listLecturer = db.tb_user.Select(x => x.ID).ToList();
@@ -232,11 +267,13 @@ namespace ManagementSystem.Controllers
             {
                 var listClasses = 0;
                 var rateSalary = (decimal)0.00;
+                var existingSalary = 0;
 
                 listClasses = db.tb_class.Where(s => s.Date.Month == DateTime.Now.Month && s.TutorID == lect).Select(s => s.Duration).DefaultIfEmpty().Sum();
                 rateSalary = (decimal)db.tb_salaryRate.OrderByDescending(x => x.DateCreated).FirstOrDefault().SalaryRate;
+                existingSalary = db.tb_salary.Where(s => s.Date.Value.Month == DateTime.Now.Month && s.TutorID == lect).Count(); // checks if that lecturer has a salary entry for that month.
 
-                if (listClasses == 0)
+                if (listClasses == 0 || existingSalary != 0)
                 {
                     continue;
                 }
@@ -259,5 +296,6 @@ namespace ManagementSystem.Controllers
 
             return RedirectToAction("Index");
         }
+
     }
 }
